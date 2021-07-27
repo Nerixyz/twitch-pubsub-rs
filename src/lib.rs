@@ -95,8 +95,8 @@ pub use token_provider::TokenProvider;
 
 pub use twitch_api2::pubsub::{
     automod_queue, channel_bits, channel_bits_badge, channel_points, channel_subscriptions,
-    moderation, user_moderation_notifications, Response as ServerMessage, TopicData,
-    Topics as Topic, TwitchResponse,
+    moderation, user_moderation_notifications, Response as ServerMessage, Topic as TopicDef,
+    TopicData, Topics as Topic, TwitchResponse,
 };
 #[cfg(feature = "unsupported")]
 #[cfg_attr(nightly, doc(cfg(feature = "unsupported")))]
