@@ -16,17 +16,17 @@ path = "src/lib.rs"
 
 [dependencies]
 tokio = { version = "1.0", features = ["rt", "time", "sync", "macros"] }
-async-trait = "0.1.50"
+async-trait = "0.1"
 async-tungstenite = { version = "0.13", features = ["tokio-runtime"] }
-log = "0.4.14"
+log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-thiserror = "1.0.26"
+thiserror = "1.0"
 # TODO: semver + remove git dep
-twitch_api2 = { git = "https://github.com/Nerixyz/twitch_api2", rev = "bdb00c7", features = ["pubsub"], default-features = false }
-enum_dispatch = "0.3.7"
-futures = "0.3.15"
-rand = "0.8.4"
+twitch_api2 = { git = "https://github.com/emilgardis/twitch_api2", rev = "1b6d1b9", features = ["pubsub"], default-features = false }
+enum_dispatch = "0.3"
+futures = "0.3"
+rand = "0.8"
 
 # See https://docs.rs/about/metadata
 [package.metadata.docs.rs]
