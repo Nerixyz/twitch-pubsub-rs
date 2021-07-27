@@ -51,13 +51,6 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
 
     fn process_command(&mut self, command: ClientLoopCommand<T>) {
         match command {
-            // ClientLoopCommand::Connect { callback } => {
-            //     if self.connections.is_empty() {
-            //         let new_connection = self.make_new_connection();
-            //         self.connections.push_back(new_connection);
-            //     }
-            //     callback.send(()).ok();
-            // }
             ClientLoopCommand::Listen {
                 callback,
                 topics,
@@ -74,9 +67,7 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
                 message,
             } => {
                 self.on_incoming_message(source_connection_id, message);
-            } // ClientLoopCommand::AvailableConnection(conn) => {
-              //     self.connections.push_back(conn)
-              // }
+            }
         }
     }
 
