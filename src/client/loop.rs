@@ -137,16 +137,19 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
     ) {
         // generate + serialize first so we don't waste a connection
         let nonce = generate_nonce(rand::thread_rng());
-        let message =
-            match crate::listen_command(&topics, token.unwrap_or_default().as_str(), nonce.as_str()) {
-                Ok(msg) => msg,
-                Err(e) => {
-                    if let Some(callback) = callback {
-                        callback.send(Err(Error::SerdeError(Arc::new(e)))).ok();
-                    }
-                    return;
+        let message = match crate::listen_command(
+            &topics,
+            token.unwrap_or_default().as_str(),
+            nonce.as_str(),
+        ) {
+            Ok(msg) => msg,
+            Err(e) => {
+                if let Some(callback) = callback {
+                    callback.send(Err(Error::SerdeError(Arc::new(e)))).ok();
                 }
-            };
+                return;
+            }
+        };
         log::debug!("Listening to {:?} (nonce={})", topics, nonce);
 
         let mut pool_connection = self
