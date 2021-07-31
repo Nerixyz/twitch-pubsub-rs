@@ -1,7 +1,7 @@
 [package]
 name = "twitch-pubsub"
 description = "Connect to Twitch PubSub"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Nerixyz"]
 repository = "https://github.com/Nerixyz/twitch-pubsub-rs"
 license = "MIT"

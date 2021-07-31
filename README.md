@@ -45,9 +45,9 @@ pub async fn main() {
     
     while let Some(message) = incoming.recv().await {
         match message {
-            ServerMessage::Message { 
-                data: TopicData::ChatModeratorActions { topic, reply } 
-            } => {
+            ServerMessage::Data(
+                TopicData::ChatModeratorActions { topic, reply }
+            )=> {
                 println!("Message on {:?}: {:?}", topic, reply);
             },
             // handle other messages here
