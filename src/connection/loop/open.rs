@@ -6,8 +6,9 @@ use tokio::sync::{mpsc, oneshot};
 use super::{closed, state::*};
 use crate::{
     connection::{message::ConnectionLoopMessage, transport::WsStreamHalves},
-    Error, ServerMessage, TokenProvider,
+    Error, TokenProvider,
 };
+use twitch_api2::pubsub::Response;
 
 type MessageSender<T> =
     mpsc::UnboundedSender<(String, Option<oneshot::Sender<Result<(), Error<T>>>>)>;
@@ -64,7 +65,7 @@ impl<T: TokenProvider> ConnectionLoopStateFunctions<T> for ConnectionLoopOpenSta
 
     fn on_incoming_message(
         mut self,
-        maybe_message: Option<Result<ServerMessage, Error<T>>>,
+        maybe_message: Option<Result<Response, Error<T>>>,
     ) -> ConnectionLoopState<T> {
         match maybe_message {
             None => {
@@ -78,10 +79,10 @@ impl<T: TokenProvider> ConnectionLoopStateFunctions<T> for ConnectionLoopOpenSta
             Some(Ok(response)) => {
                 let mut should_reconnect = false;
                 match &response {
-                    ServerMessage::Pong => {
+                    Response::Pong => {
                         self.pong_received = true;
                     }
-                    ServerMessage::Reconnect => should_reconnect = true,
+                    Response::Reconnect => should_reconnect = true,
                     _ => (),
                 }
                 self.connection_incoming_tx

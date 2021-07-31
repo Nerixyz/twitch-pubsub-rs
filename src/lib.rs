@@ -27,7 +27,7 @@
 //!
 //!     while let Some(message) = incoming.recv().await {
 //!         match message {
-//!             ServerMessage::Message { data: TopicData::ChatModeratorActions { topic, reply } } => {
+//!             ServerMessage::Data(TopicData::ChatModeratorActions { topic, reply }) => {
 //!                 println!("Message on {:?}: {:?}", topic, reply);
 //!             },
 //!             // handle other messages here
@@ -84,6 +84,7 @@ mod client;
 mod config;
 mod connection;
 mod error;
+mod message;
 pub mod providers;
 mod token_provider;
 mod util;
@@ -91,13 +92,15 @@ mod util;
 pub use client::PubsubClient;
 pub use config::ClientConfig;
 pub use error::Error;
+pub use message::{ListenError, ServerMessage};
 pub use token_provider::TokenProvider;
 
 pub use twitch_api2::pubsub::{
     automod_queue, channel_bits, channel_bits_badge, channel_points, channel_subscriptions,
-    moderation, user_moderation_notifications, Response as ServerMessage, Topic as TopicDef,
-    TopicData, Topics as Topic, TwitchResponse,
+    moderation, user_moderation_notifications, Topic as TopicDef, TopicData, Topics as Topic,
+    TwitchResponse,
 };
+
 #[cfg(feature = "unsupported")]
 #[cfg_attr(nightly, doc(cfg(feature = "unsupported")))]
 pub use twitch_api2::pubsub::{

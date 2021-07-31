@@ -4,7 +4,8 @@ use async_tungstenite::tungstenite::error::Error as WsError;
 use tokio::sync::oneshot::Sender;
 
 use super::state::*;
-use crate::{connection::transport::WsStreamHalves, Error, ServerMessage, TokenProvider};
+use crate::{connection::transport::WsStreamHalves, Error, TokenProvider};
+use twitch_api2::pubsub::Response;
 
 pub struct ConnectionLoopClosedState<T: TokenProvider> {
     pub(crate) cause: Error<T>,
@@ -28,10 +29,7 @@ impl<T: TokenProvider> ConnectionLoopStateFunctions<T> for ConnectionLoopClosedS
         ConnectionLoopState::Closed(self)
     }
 
-    fn on_incoming_message(
-        self,
-        _: Option<Result<ServerMessage, Error<T>>>,
-    ) -> ConnectionLoopState<T> {
+    fn on_incoming_message(self, _: Option<Result<Response, Error<T>>>) -> ConnectionLoopState<T> {
         ConnectionLoopState::Closed(self)
     }
 

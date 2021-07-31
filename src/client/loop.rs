@@ -5,13 +5,14 @@ use crate::{
         Connection,
     },
     util::generate_nonce,
-    ClientConfig, Error, ServerMessage, TokenProvider, Topic, TwitchResponse,
+    ClientConfig, Error, ListenError, ServerMessage, TokenProvider, Topic, TwitchResponse,
 };
 use std::{
     collections::VecDeque,
     sync::{Arc, Weak},
 };
 use tokio::sync::{mpsc, oneshot};
+use twitch_api2::pubsub::Response;
 
 pub(crate) struct ClientLoopWorker<T: TokenProvider> {
     config: Arc<ClientConfig<T>>,
@@ -233,48 +234,23 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
     ) {
         match message {
             ConnectionLoopMessage::ServerMessage(msg) => {
-                match &msg {
+                match msg {
                     // we only care about messages with a nonce
-                    ServerMessage::Response(TwitchResponse {
+                    Response::Response(TwitchResponse {
                         nonce: Some(nonce),
                         error,
-                    }) => {
-                        let conn = self
-                            .connections
-                            .iter_mut()
-                            .find(|c| c.id == source_connection_id)
-                            .unwrap();
-
-                        if let Some((topics, callback)) = conn.pending_topics.remove(nonce) {
-                            let callback_msg = match error {
-                                Some(e) if !e.is_empty() => {
-                                    log::warn!("Message with nonce {} failed: {}", nonce, e);
-                                    // don't insert the topics
-                                    Err(Error::ListenError(e.to_string()))
-                                }
-                                _ => {
-                                    log::debug!("Message with nonce {} was successful", nonce);
-                                    // assume there's no error
-                                    if let Some(topics) = topics {
-                                        for topic in topics {
-                                            conn.active_topics.insert(topic);
-                                        }
-                                    }
-                                    Ok(())
-                                }
-                            };
-                            if let Some(callback) = callback {
-                                callback.send(callback_msg).ok();
-                            }
-                        }
-                    }
-                    ServerMessage::Pong => {
+                    }) => self.on_twitch_response(source_connection_id, nonce, error),
+                    Response::Pong => {
                         // we don't need to send a pong
                         return;
                     }
+                    Response::Message { data } => {
+                        self.client_incoming_messages_tx
+                            .send(ServerMessage::Data(data))
+                            .ok();
+                    }
                     _ => (),
                 };
-                self.client_incoming_messages_tx.send(msg).ok();
             }
             ConnectionLoopMessage::Open => {
                 log::debug!("Pool connection {} is open", source_connection_id);
@@ -348,6 +324,55 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
                     }
                 });
             }
+        }
+    }
+
+    fn on_twitch_response(
+        &mut self,
+        source_connection_id: usize,
+        nonce: String,
+        error: Option<String>,
+    ) {
+        let conn = self
+            .connections
+            .iter_mut()
+            .find(|c| c.id == source_connection_id)
+            .unwrap();
+
+        let (topics, callback) = match conn.pending_topics.remove(&nonce) {
+            Some(data) => data,
+            None => return,
+        };
+        let callback_msg = match error {
+            Some(e) if !e.is_empty() => {
+                log::warn!("Message with nonce {} failed: {}", nonce, e);
+
+                // notify about the failed topics
+                if let Some(topics) = topics {
+                    self.client_incoming_messages_tx
+                        .send(ServerMessage::ListenError(ListenError {
+                            topics,
+                            error: e.clone(),
+                        }))
+                        .ok();
+                }
+
+                // don't insert the topics
+                Err(Error::ListenError(e))
+            }
+            _ => {
+                log::debug!("Message with nonce {} was successful", nonce);
+                // assume there's no error
+                if let Some(topics) = topics {
+                    for topic in topics {
+                        conn.active_topics.insert(topic);
+                    }
+                }
+                Ok(())
+            }
+        };
+        if let Some(callback) = callback {
+            callback.send(callback_msg).ok();
         }
     }
 }

@@ -16,9 +16,10 @@ use crate::{
         message::{ConnectionLoopCommand, ConnectionLoopMessage},
         transport::{WsSink, WsStream, WsStreamHalves},
     },
-    Error, ServerMessage, TokenProvider,
+    Error, TokenProvider,
 };
 use std::collections::VecDeque;
+use twitch_api2::pubsub::Response;
 
 type CommandQueue<T> = VecDeque<(String, Option<oneshot::Sender<Result<(), Error<T>>>>)>;
 type MessageReceiver<T> =
@@ -206,10 +207,7 @@ impl<T: TokenProvider> ConnectionLoopStateFunctions<T> for ConnectionLoopInitial
         self.transition_to_closed(Error::OutgoingError(error))
     }
 
-    fn on_incoming_message(
-        self,
-        _: Option<Result<ServerMessage, Error<T>>>,
-    ) -> ConnectionLoopState<T> {
+    fn on_incoming_message(self, _: Option<Result<Response, Error<T>>>) -> ConnectionLoopState<T> {
         unreachable!("Can't receive messages while initializing")
     }
 

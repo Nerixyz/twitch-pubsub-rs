@@ -1,12 +1,13 @@
-use crate::{connection::transport::WsStreamHalves, Error, ServerMessage, TokenProvider};
+use crate::{connection::transport::WsStreamHalves, Error, TokenProvider};
 use async_tungstenite::tungstenite::Error as WsError;
 use std::sync::Arc;
 use tokio::sync::oneshot;
+use twitch_api2::pubsub::Response;
 
 /// This message comes out of the event-loop
 #[derive(Debug)]
 pub enum ConnectionLoopMessage<T: TokenProvider> {
-    ServerMessage(ServerMessage),
+    ServerMessage(Response),
     Open,
     Closed { cause: Error<T> },
 }
@@ -23,6 +24,6 @@ pub enum ConnectionLoopCommand<T: TokenProvider> {
     SendPing,
     CheckPong,
 
-    IncomingMessage(Option<Result<ServerMessage, Error<T>>>),
+    IncomingMessage(Option<Result<Response, Error<T>>>),
     SendErr(Arc<WsError>),
 }

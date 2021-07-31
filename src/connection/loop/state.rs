@@ -1,9 +1,10 @@
 use super::{closed, initializing, open};
-use crate::{connection::transport::WsStreamHalves, Error, ServerMessage, TokenProvider};
+use crate::{connection::transport::WsStreamHalves, Error, TokenProvider};
 use async_tungstenite::tungstenite::Error as WsError;
 use enum_dispatch::enum_dispatch;
 use std::sync::Arc;
 use tokio::sync::oneshot;
+use twitch_api2::pubsub::Response;
 
 #[enum_dispatch]
 pub trait ConnectionLoopStateFunctions<T: TokenProvider> {
@@ -22,7 +23,7 @@ pub trait ConnectionLoopStateFunctions<T: TokenProvider> {
 
     fn on_incoming_message(
         self,
-        maybe_message: Option<Result<ServerMessage, Error<T>>>,
+        maybe_message: Option<Result<Response, Error<T>>>,
     ) -> ConnectionLoopState<T>;
 
     fn send_ping(&mut self);

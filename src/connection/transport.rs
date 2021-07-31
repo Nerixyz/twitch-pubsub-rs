@@ -1,13 +1,14 @@
-use crate::{ClientConfig, Error, ServerMessage, TokenProvider};
+use crate::{ClientConfig, Error, TokenProvider};
 use async_tungstenite::{
     tokio::connect_async,
     tungstenite::{Error as WsError, Message},
 };
 use futures::{future, stream::FusedStream, Sink, SinkExt, StreamExt};
 use std::{fmt::Formatter, sync::Arc};
+use twitch_api2::pubsub::Response;
 
 pub type WsStream<T> =
-    Box<dyn FusedStream<Item = Result<ServerMessage, Error<T>>> + Unpin + Send + Sync>;
+    Box<dyn FusedStream<Item = Result<Response, Error<T>>> + Unpin + Send + Sync>;
 pub type WsSink = Box<dyn Sink<String, Error = WsError> + Unpin + Send + Sync>;
 
 pub struct WsStreamHalves<T: TokenProvider> {
@@ -35,7 +36,7 @@ pub async fn connect_to_pubsub<T: TokenProvider>(
         .filter_map(|msg| {
             future::ready(match msg {
                 Ok(Message::Text(txt)) => Some(
-                    serde_json::from_str::<ServerMessage>(&txt)
+                    serde_json::from_str::<Response>(&txt)
                         .map_err(|e| Error::SerdeError(Arc::new(e))),
                 ),
                 Ok(_) => None,
