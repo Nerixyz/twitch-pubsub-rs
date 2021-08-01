@@ -92,7 +92,7 @@ mod util;
 pub use client::PubsubClient;
 pub use config::ClientConfig;
 pub use error::Error;
-pub use message::{ListenError, ServerMessage};
+pub use message::{ConnectionClosed, ListenError, ParseError, ServerMessage};
 pub use token_provider::TokenProvider;
 
 pub use twitch_api2::pubsub::{

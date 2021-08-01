@@ -41,3 +41,5 @@ pub struct ConnectionClosed<T: TokenProvider> {
     /// The reason why it was closed
     pub cause: Error<T>,
 }
+
+// reminder: re-export the structs here
