@@ -29,7 +29,10 @@ impl<T: TokenProvider> ConnectionLoopStateFunctions<T> for ConnectionLoopClosedS
         ConnectionLoopState::Closed(self)
     }
 
-    fn on_incoming_message(self, _: Option<Result<Response, Error<T>>>) -> ConnectionLoopState<T> {
+    fn on_incoming_message(
+        self,
+        _: Option<Result<Result<Response, (String, serde_json::Error)>, Error<T>>>,
+    ) -> ConnectionLoopState<T> {
         ConnectionLoopState::Closed(self)
     }
 

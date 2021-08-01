@@ -7,8 +7,8 @@ use futures::{future, stream::FusedStream, Sink, SinkExt, StreamExt};
 use std::{fmt::Formatter, sync::Arc};
 use twitch_api2::pubsub::Response;
 
-pub type WsStream<T> =
-    Box<dyn FusedStream<Item = Result<Response, Error<T>>> + Unpin + Send + Sync>;
+pub type WsStreamItem<T> = Result<Result<Response, (String, serde_json::Error)>, Error<T>>;
+pub type WsStream<T> = Box<dyn FusedStream<Item = WsStreamItem<T>> + Unpin + Send + Sync>;
 pub type WsSink = Box<dyn Sink<String, Error = WsError> + Unpin + Send + Sync>;
 
 pub struct WsStreamHalves<T: TokenProvider> {
@@ -35,10 +35,9 @@ pub async fn connect_to_pubsub<T: TokenProvider>(
     let read = read
         .filter_map(|msg| {
             future::ready(match msg {
-                Ok(Message::Text(txt)) => Some(
-                    serde_json::from_str::<Response>(&txt)
-                        .map_err(|e| Error::SerdeError(Arc::new(e))),
-                ),
+                Ok(Message::Text(txt)) => Some(Ok(
+                    serde_json::from_str::<Response>(&txt).map_err(|e| (txt, e))
+                )),
                 Ok(_) => None,
                 Err(e) => Some(Err(Error::WsError(Arc::new(e)))),
             })

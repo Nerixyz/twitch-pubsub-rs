@@ -30,7 +30,7 @@ impl<T: TokenProvider> PubsubClient<T> {
     /// This will spawn a task in the background.
     pub fn new(
         config: ClientConfig<T>,
-    ) -> (mpsc::UnboundedReceiver<ServerMessage>, PubsubClient<T>) {
+    ) -> (mpsc::UnboundedReceiver<ServerMessage<T>>, PubsubClient<T>) {
         let config = Arc::new(config);
         let (client_loop_tx, client_loop_rx) = mpsc::unbounded_channel();
         let client_loop_tx = Arc::new(client_loop_tx);

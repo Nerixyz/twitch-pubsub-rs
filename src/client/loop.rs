@@ -4,6 +4,7 @@ use crate::{
         message::{ConnectionLoopCommand, ConnectionLoopMessage},
         Connection,
     },
+    message::{ConnectionClosed, ParseError},
     util::generate_nonce,
     ClientConfig, Error, ListenError, ServerMessage, TokenProvider, Topic, TwitchResponse,
 };
@@ -20,7 +21,7 @@ pub(crate) struct ClientLoopWorker<T: TokenProvider> {
     client_loop_rx: mpsc::UnboundedReceiver<ClientLoopCommand<T>>,
     connections: VecDeque<PoolConnection<T>>,
     client_loop_tx: Weak<mpsc::UnboundedSender<ClientLoopCommand<T>>>,
-    client_incoming_messages_tx: mpsc::UnboundedSender<ServerMessage>,
+    client_incoming_messages_tx: mpsc::UnboundedSender<ServerMessage<T>>,
 }
 
 impl<T: TokenProvider> ClientLoopWorker<T> {
@@ -28,7 +29,7 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
         config: Arc<ClientConfig<T>>,
         client_loop_tx: Weak<mpsc::UnboundedSender<ClientLoopCommand<T>>>,
         client_loop_rx: mpsc::UnboundedReceiver<ClientLoopCommand<T>>,
-        client_incoming_messages_tx: mpsc::UnboundedSender<ServerMessage>,
+        client_incoming_messages_tx: mpsc::UnboundedSender<ServerMessage<T>>,
     ) {
         let worker = ClientLoopWorker {
             config,
@@ -236,17 +237,22 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
             ConnectionLoopMessage::ServerMessage(msg) => {
                 match msg {
                     // we only care about messages with a nonce
-                    Response::Response(TwitchResponse {
+                    Ok(Response::Response(TwitchResponse {
                         nonce: Some(nonce),
                         error,
-                    }) => self.on_twitch_response(source_connection_id, nonce, error),
-                    Response::Pong => {
+                    })) => self.on_twitch_response(source_connection_id, nonce, error),
+                    Ok(Response::Pong) => {
                         // we don't need to send a pong
                         return;
                     }
-                    Response::Message { data } => {
+                    Ok(Response::Message { data }) => {
                         self.client_incoming_messages_tx
                             .send(ServerMessage::Data(data))
+                            .ok();
+                    }
+                    Err((raw, error)) => {
+                        self.client_incoming_messages_tx
+                            .send(ServerMessage::ParseError(ParseError { raw, error }))
                             .ok();
                     }
                     _ => (),
@@ -276,6 +282,13 @@ impl<T: TokenProvider> ClientLoopWorker<T> {
                         callback.send(Err(cause.clone())).ok();
                     }
                 }
+
+                self.client_incoming_messages_tx
+                    .send(ServerMessage::ConnectionClosed(ConnectionClosed {
+                        connection_id: source_connection_id,
+                        cause: cause.clone(),
+                    }))
+                    .ok();
 
                 if connection.active_topics.is_empty() {
                     log::debug!(
