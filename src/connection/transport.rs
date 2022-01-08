@@ -4,7 +4,7 @@ use async_tungstenite::{
     tungstenite::{Error as WsError, Message},
 };
 use futures::{future, stream::FusedStream, Sink, SinkExt, StreamExt};
-use std::{fmt::Formatter, sync::Arc};
+use std::{fmt::Formatter, ops::Deref, sync::Arc};
 use twitch_api2::pubsub::Response;
 
 pub type WsStreamItem<T> = Result<Result<Response, (String, serde_json::Error)>, Error<T>>;
@@ -25,7 +25,7 @@ impl<T: TokenProvider> std::fmt::Debug for WsStreamHalves<T> {
 pub async fn connect_to_pubsub<T: TokenProvider>(
     config: &ClientConfig<T>,
 ) -> Result<WsStreamHalves<T>, Error<T>> {
-    let connection_fut = connect_async(twitch_api2::TWITCH_PUBSUB_URL);
+    let connection_fut = connect_async(twitch_api2::TWITCH_PUBSUB_URL.deref());
     let (ws_stream, _) = tokio::time::timeout(config.connect_timeout, connection_fut)
         .await
         .map_err(|_| Error::ConnectTimeout)?
