@@ -79,6 +79,7 @@
 //!
 //! These features are mutually exclusive.
 //!
+extern crate twitch_api as twitch_api2;
 
 mod client;
 mod config;
