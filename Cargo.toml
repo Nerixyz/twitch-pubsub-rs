@@ -17,13 +17,13 @@ path = "src/lib.rs"
 [dependencies]
 tokio = { version = "1.0", features = ["rt", "time", "sync", "macros"] }
 async-trait = "0.1"
-async-tungstenite = { version = "0.13", features = ["tokio-runtime"] }
+async-tungstenite = { version = "0.17", features = ["tokio-runtime"] }
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
 # TODO: semver + remove git dep
-twitch_api2 = { git = "https://github.com/emilgardis/twitch_api2", rev = "7194ec0", features = ["pubsub"], default-features = false }
+twitch_api = { git = "https://github.com/twitch-rs/twitch_api", rev = "340a582", features = ["pubsub"], default-features = false }
 enum_dispatch = "0.3"
 futures = "0.3"
 rand = "0.8"
@@ -42,7 +42,7 @@ default = ["static-token-provider", "native-tls"]
 no-token-provider = []
 static-token-provider = []
 
-unsupported = ["twitch_api2/unsupported"]
+unsupported = ["twitch_api/unsupported"]
 
 native-tls = ["async-tungstenite/tokio-native-tls"]
-rustls-webpki-roots = ["async-tungstenite/tokio-rustls"]
+rustls-webpki-roots = ["async-tungstenite/tokio-rustls-webpki-roots"]
