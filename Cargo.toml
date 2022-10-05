@@ -22,8 +22,8 @@ log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
-# TODO: semver + remove git dep
-twitch_api = { git = "https://github.com/twitch-rs/twitch_api", rev = "340a582", features = ["pubsub"], default-features = false }
+# TODO: remove git dep
+twitch_api = { git = "https://github.com/twitch-rs/twitch_api", features = ["pubsub"], default-features = false }
 enum_dispatch = "0.3"
 futures = "0.3"
 rand = "0.8"
