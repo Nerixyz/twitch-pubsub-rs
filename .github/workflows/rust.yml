@@ -1,0 +1,26 @@
+name: Rust
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  build:
+    name: Build and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          components: clippy
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build
+      - name: Run clippy
+        run: cargo clippy --tests -- -D clippy::all -D clippy::pedantic
+      - name: Run tests
+        run: cargo test
