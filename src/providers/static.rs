@@ -1,5 +1,4 @@
 use crate::{TokenProvider, Topic};
-use async_trait::async_trait;
 use std::borrow::Cow;
 
 /// The `StaticTokenProvider` always provides the same static token.
@@ -17,7 +16,6 @@ impl StaticTokenProvider {
     }
 }
 
-#[async_trait]
 impl TokenProvider for StaticTokenProvider {
     // this doesn't really matter - we never return an error
     type Error = std::io::Error;

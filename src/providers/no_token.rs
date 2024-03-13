@@ -1,5 +1,4 @@
 use crate::{TokenProvider, Topic};
-use async_trait::async_trait;
 
 /// This [`TokenProvider`][t] will never provide a token.
 ///
@@ -7,7 +6,6 @@ use async_trait::async_trait;
 #[derive(Debug)]
 pub struct NoTokenProvider;
 
-#[async_trait]
 impl TokenProvider for NoTokenProvider {
     // doesn't matter since we don't return an error
     type Error = std::io::Error;

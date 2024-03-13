@@ -79,38 +79,32 @@
 //!
 //! These features are mutually exclusive.
 //!
-extern crate twitch_api as twitch_api2;
 
-mod client;
-mod config;
-mod connection;
-mod error;
-mod message;
+mod event_loop;
+mod handler;
+mod manager;
 pub mod providers;
+mod pubsub;
 mod token_provider;
 mod util;
+mod worker;
+mod ws;
 
-pub use client::PubsubClient;
-pub use config::ClientConfig;
-pub use error::Error;
-pub use message::{ConnectionClosed, ListenError, ParseError, ServerMessage};
 pub use token_provider::TokenProvider;
 
-pub use twitch_api2::pubsub::{
+pub(crate) use event_loop::EventLoopAction;
+
+pub use twitch_api::pubsub::{
     automod_queue, channel_bits, channel_bits_badge, channel_points, channel_subscriptions,
     moderation, user_moderation_notifications, Topic as TopicDef, TopicData, Topics as Topic,
     TwitchResponse,
 };
 
+pub use manager::{create_manager, Sender};
+pub use pubsub::PubSubEvent;
+
 #[cfg(feature = "unsupported")]
 #[cfg_attr(nightly, doc(cfg(feature = "unsupported")))]
-pub use twitch_api2::pubsub::{
+pub use twitch_api::pubsub::{
     channel_cheer, channel_sub_gifts, community_points, following, hypetrain, raid, video_playback,
 };
-pub(crate) use twitch_api2::pubsub::{listen_command, unlisten_command};
-
-#[cfg(all(feature = "native-tls", feature = "rustls-webpki-roots"))]
-compile_error!("`native-tls` and `rustls-webpki-roots` feature flags are mutually exclusive, enable only one of them");
-
-#[cfg(not(any(feature = "native-tls", feature = "rustls-webpki-roots")))]
-compile_error!("One feature flag of `native-tls` and `rustls-webpki-roots` has to be enabled");
