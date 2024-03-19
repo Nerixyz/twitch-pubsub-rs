@@ -1,6 +1,5 @@
 use crate::Topic;
-use std::fmt::Debug;
-use std::future::Future;
+use std::{fmt::Debug, future::Future};
 
 /// This trait defines a token provider.
 /// It's used to provide tokens for one or many topics.

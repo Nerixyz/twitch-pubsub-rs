@@ -15,11 +15,11 @@ Not yet.
 
 # Features
 
-* Automatic reconnection
-* Connection pooling
-* Custom token handling
+- Automatic reconnection
+- Connection pooling
+- Custom token handling
 
-# Example 
+# Example
 
 ```rust
 use twitch_pubsub::{
@@ -36,13 +36,13 @@ use twitch_pubsub::{
 pub async fn main() {
     let config = ClientConfig::new(StaticTokenProvider::new("MY STATIC SECRET TOKEN"));
     let (mut incoming, client) = PubsubClient::new(config);
-    
+
     client.listen(Topic::ChatModeratorActions(moderation::ChatModeratorActions {
         // your user-id
         user_id: 129546453,
         channel_id: 129546453
     })).await.expect("Failed listening to chat-moderator-actions");
-    
+
     while let Some(message) = incoming.recv().await {
         match message {
             ServerMessage::Data(
