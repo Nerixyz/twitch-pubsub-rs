@@ -1,5 +1,6 @@
-#![warn(missing_docs)]
-//! Connect to Twitch PubSub from Rust land.
+#![warn(missing_docs, clippy::pedantic)]
+#![allow(clippy::module_name_repetitions)]
+//! Connect to Twitch `PubSub` from Rust land.
 //!
 //! # Example
 //!

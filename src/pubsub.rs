@@ -68,7 +68,7 @@ impl WorkerHandler<PubSubMessage> for PubSubWorker {
             } => {
                 let msg = match pubsub::listen_command(
                     &topics,
-                    auth_token.as_ref().map(|s| s.as_str()),
+                    auth_token.as_ref().map(String::as_str),
                     nonce.as_ref(),
                 ) {
                     Ok(m) => m,
@@ -207,7 +207,7 @@ where
     async fn on_worker_closed(
         &mut self,
         ctx: &mut HandlerContext<Self>,
-        _id: usize,
+        _: usize,
         data: Self::WorkerData,
     ) -> EventLoopAction {
         let mut all = data.topics;
@@ -233,7 +233,7 @@ where
                 let subs = self.provider.provide_many(topics).await;
                 match subs {
                     Ok(subs) => {
-                        self.subscribe_to(ctx, subs);
+                        Self::subscribe_to(ctx, subs);
                         EventLoopAction::Continue
                     }
                     Err(e) => ctx.emit(PubSubEvent::ProvideError(e)).into(),
@@ -248,11 +248,7 @@ impl<T: TokenProvider> PubSubHandler<T> {
         Self { provider }
     }
 
-    fn subscribe_to(
-        &mut self,
-        ctx: &mut HandlerContext<Self>,
-        subs: Vec<(Vec<Topics>, Option<String>)>,
-    ) {
+    fn subscribe_to(ctx: &mut HandlerContext<Self>, subs: Vec<(Vec<Topics>, Option<String>)>) {
         for (mut topics, token) in subs {
             while !topics.is_empty() {
                 // Take at most [TOPICS_PER_CONNECTION] subs
@@ -262,46 +258,41 @@ impl<T: TokenProvider> PubSubHandler<T> {
                     topics.split_off(TOPICS_PER_CONNECTION)
                 };
 
-                match ctx
-                    .find_mut(|_, data| data.total_subs + to_sub.len() <= TOPICS_PER_CONNECTION)
+                if let Some(ws) =
+                    ctx.find_mut(|_, data| data.total_subs + to_sub.len() <= TOPICS_PER_CONNECTION)
                 {
-                    // Fits in existing connection
-                    Some(ws) => {
-                        if ws.data_mut().connected {
-                            let nonce = generate_nonce(rand::thread_rng());
-                            ws.data_mut()
-                                .unconfirmed
-                                .insert(nonce.clone(), to_sub.clone());
-                            ws.data_mut().total_subs += to_sub.len();
-                            let _ = ws.send(WorkerCommand::Subscribe {
-                                topics: to_sub,
-                                auth_token: token.clone(),
-                                nonce,
-                            });
-                        } else {
-                            ws.data_mut().pending_subscriptions.push(PendingSub {
+                    if ws.data_mut().connected {
+                        let nonce = generate_nonce(rand::thread_rng());
+                        ws.data_mut()
+                            .unconfirmed
+                            .insert(nonce.clone(), to_sub.clone());
+                        ws.data_mut().total_subs += to_sub.len();
+                        let _ = ws.send(WorkerCommand::Subscribe {
+                            topics: to_sub,
+                            auth_token: token.clone(),
+                            nonce,
+                        });
+                    } else {
+                        ws.data_mut().pending_subscriptions.push(PendingSub {
+                            topics: to_sub,
+                            auth: token.clone(),
+                        });
+                    }
+                } else {
+                    let total_subs = to_sub.len();
+                    ctx.create(
+                        WorkerData {
+                            connected: false,
+                            pending_subscriptions: vec![PendingSub {
                                 topics: to_sub,
                                 auth: token.clone(),
-                            });
-                        }
-                    }
-                    // Create new connection with batch
-                    None => {
-                        let total_subs = to_sub.len();
-                        ctx.create(
-                            WorkerData {
-                                connected: false,
-                                pending_subscriptions: vec![PendingSub {
-                                    topics: to_sub,
-                                    auth: token.clone(),
-                                }],
-                                topics: vec![],
-                                unconfirmed: HashMap::new(),
-                                total_subs,
-                            },
-                            PubSubWorker {},
-                        );
-                    }
+                            }],
+                            topics: vec![],
+                            unconfirmed: HashMap::new(),
+                            total_subs,
+                        },
+                        PubSubWorker {},
+                    );
                 }
             }
         }

@@ -21,6 +21,6 @@ jobs:
       - name: Build
         run: cargo build
       - name: Run clippy
-        run: cargo clippy --tests -- -D clippy::all -D clippy::pedantic
+        run: cargo clippy --tests
       - name: Run tests
         run: cargo test

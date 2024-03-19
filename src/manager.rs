@@ -31,6 +31,7 @@ pub fn create_manager<T: TokenProvider>(
 
 impl Sender {
     /// Listen to some topics
+    #[must_use]
     pub fn listen(&self, topics: Vec<pubsub::Topics>) -> bool {
         self.tx.send(PubSubCommand::Subscribe(topics)).is_ok()
     }

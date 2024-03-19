@@ -17,9 +17,9 @@ async fn main() -> anyhow::Result<()> {
         Url::parse("wss://pubsub-edge.twitch.tv")?,
     );
 
-    tx.listen(vec![Topic::VideoPlayback(VideoPlayback {
+    assert!(tx.listen(vec![Topic::VideoPlayback(VideoPlayback {
         channel_login: arg.into(),
-    })]);
+    })]));
 
     while let Some(event) = rx.recv().await {
         match event {
