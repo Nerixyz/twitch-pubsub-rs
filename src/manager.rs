@@ -9,6 +9,7 @@ use crate::{
 use ws_pool::{spawn_handler, HandlerContext};
 
 /// Send handle
+#[derive(Clone)]
 pub struct Sender {
     tx: mpsc::UnboundedSender<PubSubCommand>,
 }
