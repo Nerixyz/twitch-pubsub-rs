@@ -80,19 +80,13 @@
 //! These features are mutually exclusive.
 //!
 
-mod event_loop;
-mod handler;
 mod manager;
 pub mod providers;
 mod pubsub;
 mod token_provider;
 mod util;
-mod worker;
-mod ws;
 
 pub use token_provider::TokenProvider;
-
-pub(crate) use event_loop::EventLoopAction;
 
 pub use twitch_api::pubsub::{
     automod_queue, channel_bits, channel_bits_badge, channel_points, channel_subscriptions,

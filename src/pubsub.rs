@@ -4,11 +4,9 @@ use tokio::sync::mpsc;
 use tracing::warn;
 use twitch_api::pubsub::{self, Topics};
 
-use crate::{
-    handler::Handler,
-    util::generate_nonce,
-    worker::{Loopback, WorkerHandler, WsContext},
-    EventLoopAction, TokenProvider,
+use crate::{util::generate_nonce, TokenProvider};
+use ws_pool::{
+    EventLoopAction, Handler, HandlerContext, Loopback, Worker, WorkerHandler, WsContext,
 };
 
 const TOPICS_PER_CONNECTION: usize = 50;
@@ -132,9 +130,18 @@ pub enum PubSubCommand {
     Subscribe(Vec<Topics>),
 }
 
+/// An event from the eventloop
 pub enum PubSubEvent<T: TokenProvider> {
+    /// A PubSub message was received
     Message(pubsub::TopicData),
-    SubError { topics: Vec<Topics>, error: String },
+    /// A subscription to some topics didn't work
+    SubError {
+        /// The affected topics
+        topics: Vec<Topics>,
+        /// The error received from Twitch
+        error: String,
+    },
+    /// The [TokenProvider] failed to provide a token
     ProvideError(T::Error),
 }
 
@@ -154,7 +161,7 @@ where
 
     async fn on_message(
         &mut self,
-        worker: &mut crate::handler::Worker<Self>,
+        worker: &mut Worker<Self>,
         tx: &mpsc::UnboundedSender<Self::Event>,
         message: Self::Message,
     ) -> EventLoopAction {
@@ -199,7 +206,7 @@ where
 
     async fn on_worker_closed(
         &mut self,
-        ctx: &mut crate::handler::HandlerContext<Self>,
+        ctx: &mut HandlerContext<Self>,
         _id: usize,
         data: Self::WorkerData,
     ) -> EventLoopAction {
@@ -218,7 +225,7 @@ where
 
     async fn on_external(
         &mut self,
-        ctx: &mut crate::handler::HandlerContext<Self>,
+        ctx: &mut HandlerContext<Self>,
         external: Self::External,
     ) -> EventLoopAction {
         match external {
@@ -226,54 +233,7 @@ where
                 let subs = self.provider.provide_many(topics).await;
                 match subs {
                     Ok(subs) => {
-                        for (mut topics, token) in subs {
-                            while !topics.is_empty() {
-                                let to_sub = if topics.len() <= TOPICS_PER_CONNECTION {
-                                    std::mem::take(&mut topics)
-                                } else {
-                                    topics.split_off(TOPICS_PER_CONNECTION)
-                                };
-                                match ctx.find_mut(|_, data| {
-                                    data.total_subs + to_sub.len() <= TOPICS_PER_CONNECTION
-                                }) {
-                                    Some(ws) => {
-                                        if ws.data_mut().connected {
-                                            let nonce = generate_nonce(rand::thread_rng());
-                                            ws.data_mut()
-                                                .unconfirmed
-                                                .insert(nonce.clone(), to_sub.clone());
-                                            ws.data_mut().total_subs += to_sub.len();
-                                            let _ = ws.send(WorkerCommand::Subscribe {
-                                                topics: to_sub,
-                                                auth_token: token.clone(),
-                                                nonce,
-                                            });
-                                        } else {
-                                            ws.data_mut().pending_subscriptions.push(PendingSub {
-                                                topics: to_sub,
-                                                auth: token.clone(),
-                                            });
-                                        }
-                                    }
-                                    None => {
-                                        let total_subs = to_sub.len();
-                                        ctx.create(
-                                            WorkerData {
-                                                connected: false,
-                                                pending_subscriptions: vec![PendingSub {
-                                                    topics: to_sub,
-                                                    auth: token.clone(),
-                                                }],
-                                                topics: vec![],
-                                                unconfirmed: HashMap::new(),
-                                                total_subs,
-                                            },
-                                            PubSubWorker {},
-                                        );
-                                    }
-                                }
-                            }
-                        }
+                        self.subscribe_to(ctx, subs);
                         EventLoopAction::Continue
                     }
                     Err(e) => ctx.emit(PubSubEvent::ProvideError(e)).into(),
@@ -286,5 +246,64 @@ where
 impl<T: TokenProvider> PubSubHandler<T> {
     pub fn new(provider: T) -> Self {
         Self { provider }
+    }
+
+    fn subscribe_to(
+        &mut self,
+        ctx: &mut HandlerContext<Self>,
+        subs: Vec<(Vec<Topics>, Option<String>)>,
+    ) {
+        for (mut topics, token) in subs {
+            while !topics.is_empty() {
+                // Take at most [TOPICS_PER_CONNECTION] subs
+                let to_sub = if topics.len() <= TOPICS_PER_CONNECTION {
+                    std::mem::take(&mut topics)
+                } else {
+                    topics.split_off(TOPICS_PER_CONNECTION)
+                };
+
+                match ctx
+                    .find_mut(|_, data| data.total_subs + to_sub.len() <= TOPICS_PER_CONNECTION)
+                {
+                    // Fits in existing connection
+                    Some(ws) => {
+                        if ws.data_mut().connected {
+                            let nonce = generate_nonce(rand::thread_rng());
+                            ws.data_mut()
+                                .unconfirmed
+                                .insert(nonce.clone(), to_sub.clone());
+                            ws.data_mut().total_subs += to_sub.len();
+                            let _ = ws.send(WorkerCommand::Subscribe {
+                                topics: to_sub,
+                                auth_token: token.clone(),
+                                nonce,
+                            });
+                        } else {
+                            ws.data_mut().pending_subscriptions.push(PendingSub {
+                                topics: to_sub,
+                                auth: token.clone(),
+                            });
+                        }
+                    }
+                    // Create new connection with batch
+                    None => {
+                        let total_subs = to_sub.len();
+                        ctx.create(
+                            WorkerData {
+                                connected: false,
+                                pending_subscriptions: vec![PendingSub {
+                                    topics: to_sub,
+                                    auth: token.clone(),
+                                }],
+                                topics: vec![],
+                                unconfirmed: HashMap::new(),
+                                total_subs,
+                            },
+                            PubSubWorker {},
+                        );
+                    }
+                }
+            }
+        }
     }
 }

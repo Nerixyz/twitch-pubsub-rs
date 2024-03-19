@@ -3,10 +3,10 @@ use twitch_api::pubsub;
 use url::Url;
 
 use crate::{
-    handler::{create_handler, spawn_handler},
     pubsub::{PubSubCommand, PubSubEvent, PubSubHandler},
     TokenProvider,
 };
+use ws_pool::{spawn_handler, HandlerContext};
 
 /// Send handle
 pub struct Sender {
@@ -21,7 +21,7 @@ pub fn create_manager<T: TokenProvider>(
 ) -> (Sender, mpsc::UnboundedReceiver<PubSubEvent<T>>) {
     let (tx, external_rx) = mpsc::unbounded_channel();
     let (event_tx, event_rx) = mpsc::unbounded_channel();
-    let ctx = create_handler(url, event_tx, tx.downgrade());
+    let ctx = HandlerContext::new(url, event_tx, tx.downgrade());
 
     spawn_handler(PubSubHandler::new(provider), ctx, external_rx);
 
