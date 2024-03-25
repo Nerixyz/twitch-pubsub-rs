@@ -273,6 +273,7 @@ impl<T: TokenProvider> PubSubHandler<T> {
                             nonce,
                         });
                     } else {
+                        ws.data_mut().total_subs += to_sub.len();
                         ws.data_mut().pending_subscriptions.push(PendingSub {
                             topics: to_sub,
                             auth: token.clone(),
