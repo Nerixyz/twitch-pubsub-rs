@@ -277,6 +277,7 @@ impl<T: TokenProvider> PubSubHandler<T> {
                             topics: to_sub,
                             auth: token.clone(),
                         });
+                        ws.data_mut().total_subs += to_sub.len();
                     }
                 } else {
                     let total_subs = to_sub.len();

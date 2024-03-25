@@ -2,42 +2,6 @@
 #![allow(clippy::module_name_repetitions)]
 //! Connect to Twitch `PubSub` from Rust land.
 //!
-//! # Example
-//!
-//! ```no_run
-//! use twitch_pubsub::{
-//!     PubsubClient,
-//!     Topic,
-//!     moderation,
-//!     providers::StaticTokenProvider,
-//!     ClientConfig,
-//!     ServerMessage,
-//!     TopicData,
-//! };
-//!
-//! #[tokio::main]
-//! pub async fn main() {
-//!     let config = ClientConfig::new(StaticTokenProvider::new("MY STATIC SECRET TOKEN"));
-//!     let (mut incoming, client) = PubsubClient::new(config);
-//!
-//!     client.listen(Topic::ChatModeratorActions(moderation::ChatModeratorActions {
-//!         // your user-id
-//!         user_id: 129546453,
-//!         channel_id: 129546453
-//!     })).await.expect("Failed listening to chat-moderator-actions");
-//!
-//!     while let Some(message) = incoming.recv().await {
-//!         match message {
-//!             ServerMessage::Data(TopicData::ChatModeratorActions { topic, reply }) => {
-//!                 println!("Message on {:?}: {:?}", topic, reply);
-//!             },
-//!             // handle other messages here
-//!             _ => ()
-//!         }
-//!     }
-//! }
-//! ```
-//!
 //! # Listening to multiple topics
 //!
 //! You can listen to multiple topics at once by using `client.listen_many(topics)`.
@@ -72,13 +36,6 @@
 //!   Use these at your own risk by understanding the [Twitch Developer Agreement](https://www.twitch.tv/p/en/legal/developer-agreement/).
 //!   Changes to these topics may not follow _semver_.
 //!   See more at [`twitch_api2`](https://docs.rs/twitch_api2/latest/twitch_api2/pubsub/index.html#undocumented-features).
-//!
-//! ### TLS
-//!
-//! * `native-tls` will use the OS-native TLS implementation and the OS-native certificate store.
-//! * `rustls-webpki-roots` will use [Rustls](https://github.com/ctz/rustls) as the TLS implementation and [webpki-roots](https://github.com/rustls/webpki-roots) for certificates.
-//!
-//! These features are mutually exclusive.
 //!
 
 mod manager;
