@@ -255,7 +255,7 @@ impl<T: TokenProvider> PubSubHandler<T> {
                 let to_sub = if topics.len() <= TOPICS_PER_CONNECTION {
                     std::mem::take(&mut topics)
                 } else {
-                    topics.split_off(TOPICS_PER_CONNECTION)
+                    topics.split_off(topics.len() - TOPICS_PER_CONNECTION)
                 };
 
                 if let Some(ws) =
