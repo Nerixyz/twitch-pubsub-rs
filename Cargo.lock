@@ -431,17 +431,6 @@ dependencies = [
 
 [[package]]
 name = "http"
-version = "0.2.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "601cbb57e577e2f5ef5be8e7b83f0f63994f25aa94d673e54a92d5c516d101f1"
-dependencies = [
- "bytes",
- "fnv",
- "itoa",
-]
-
-[[package]]
-name = "http"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "21b9ddb458710bc376481b842f5da65cdf31522de232c1ca8146abce2a358258"
@@ -458,7 +447,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1cac85db508abc24a2e48553ba12a996e87244a0395ce011e62b37158745d643"
 dependencies = [
  "bytes",
- "http 1.1.0",
+ "http",
 ]
 
 [[package]]
@@ -469,7 +458,7 @@ checksum = "0475f8b2ac86659c21b64320d5d653f9efe42acd2a4e560073ec61a155a34f1d"
 dependencies = [
  "bytes",
  "futures-core",
- "http 1.1.0",
+ "http",
  "http-body",
  "pin-project-lite",
 ]
@@ -495,7 +484,7 @@ dependencies = [
  "bytes",
  "futures-channel",
  "futures-util",
- "http 1.1.0",
+ "http",
  "http-body",
  "httparse",
  "httpdate",
@@ -514,7 +503,7 @@ checksum = "ca38ef113da30126bbff9cd1705f9273e15d45498615d138b0c20279ac7a76aa"
 dependencies = [
  "bytes",
  "futures-util",
- "http 1.1.0",
+ "http",
  "http-body",
  "hyper",
  "pin-project-lite",
@@ -1345,11 +1334,11 @@ dependencies = [
 [[package]]
 name = "twitch_api"
 version = "0.7.0-rc.7"
-source = "git+https://github.com/twitch-rs/twitch_api#c69d610036d0dce14e58b094281307e813f8fe25"
+source = "git+https://github.com/twitch-rs/twitch_api#5618d7ac2e40cf58f7ee7e17d861f6e6e6abecf9"
 dependencies = [
  "aliri_braid",
  "displaydoc",
- "http 0.2.12",
+ "http",
  "once_cell",
  "serde",
  "serde_derive",
@@ -1365,7 +1354,7 @@ dependencies = [
 [[package]]
 name = "twitch_types"
 version = "0.4.4"
-source = "git+https://github.com/twitch-rs/twitch_api#c69d610036d0dce14e58b094281307e813f8fe25"
+source = "git+https://github.com/twitch-rs/twitch_api#5618d7ac2e40cf58f7ee7e17d861f6e6e6abecf9"
 dependencies = [
  "serde",
  "serde_derive",
@@ -1695,7 +1684,7 @@ version = "0.1.0"
 source = "git+https://github.com/nerixyz/ws-pool#51955185036dddd2650471e2d2ea8fdea24d10b8"
 dependencies = [
  "fastwebsockets",
- "http 1.1.0",
+ "http",
  "http-body-util",
  "hyper",
  "hyper-util",
