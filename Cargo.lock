@@ -1681,7 +1681,7 @@ checksum = "32b752e52a2da0ddfbdbcc6fceadfeede4c939ed16d13e648833a61dfb611ed8"
 [[package]]
 name = "ws-pool"
 version = "0.1.0"
-source = "git+https://github.com/nerixyz/ws-pool#51955185036dddd2650471e2d2ea8fdea24d10b8"
+source = "git+https://github.com/nerixyz/ws-pool#04b37ef6d3c10ceb2981fb4abaa499c3ebecb8c4"
 dependencies = [
  "fastwebsockets",
  "http",
