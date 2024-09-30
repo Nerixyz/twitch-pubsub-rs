@@ -245,9 +245,9 @@ dependencies = [
 
 [[package]]
 name = "displaydoc"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "487585f4d0c6655fe74905e2504d8ad6908e4db67f744eb140876906c2f3175d"
+checksum = "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -497,9 +497,9 @@ dependencies = [
 
 [[package]]
 name = "hyper-util"
-version = "0.1.8"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da62f120a8a37763efb0cf8fdf264b884c7b8b9ac8660b900c8661030c00e6ba"
+checksum = "41296eb09f183ac68eec06e03cdbea2e759633d4067b2f6552fc2e009bcad08b"
 dependencies = [
  "bytes",
  "futures-util",
@@ -1252,7 +1252,7 @@ dependencies = [
 [[package]]
 name = "twitch_api"
 version = "0.7.0-rc.7"
-source = "git+https://github.com/twitch-rs/twitch_api#fab59a8607a17c758f3da41b8e333d92cce857d0"
+source = "git+https://github.com/twitch-rs/twitch_api#430f2dbcf99aa5e300c376b8d18244bc1a668cb7"
 dependencies = [
  "aliri_braid",
  "displaydoc",
@@ -1272,7 +1272,7 @@ dependencies = [
 [[package]]
 name = "twitch_types"
 version = "0.4.5"
-source = "git+https://github.com/twitch-rs/twitch_api#fab59a8607a17c758f3da41b8e333d92cce857d0"
+source = "git+https://github.com/twitch-rs/twitch_api#430f2dbcf99aa5e300c376b8d18244bc1a668cb7"
 dependencies = [
  "serde",
  "serde_derive",
@@ -1540,7 +1540,7 @@ checksum = "bec47e5bfd1bff0eeaf6d8b485cc1074891a197ab4225d504cb7a1ab88b02bf0"
 [[package]]
 name = "ws-pool"
 version = "0.1.0"
-source = "git+https://github.com/nerixyz/ws-pool#d5531d2e50f74a0b84a3d33d773fa91575d89d94"
+source = "git+https://github.com/nerixyz/ws-pool#f5ab94089fcfeca4a79e258edc870c312af2bedb"
 dependencies = [
  "fastwebsockets",
  "http",
