@@ -13,7 +13,7 @@ name = "twitch_pubsub"
 path = "src/lib.rs"
 
 [dependencies]
-tokio = { version = "1.41", features = ["rt", "time", "sync", "macros"] }
+tokio = { version = "1.42", features = ["rt", "time", "sync", "macros"] }
 thiserror = "2.0"
 # TODO: remove git dep
 twitch_api = { git = "https://github.com/twitch-rs/twitch_api", features = [
