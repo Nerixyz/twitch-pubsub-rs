@@ -278,9 +278,9 @@ dependencies = [
 
 [[package]]
 name = "fastwebsockets"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26da0c7b5cef45c521a6f9cdfffdfeb6c9f5804fbac332deb5ae254634c7a6be"
+checksum = "5574849ef5c007a399f8426b9254bcf2d8a6d739039c08c739d95f47ce46c0a3"
 dependencies = [
  "base64",
  "bytes",
@@ -1716,7 +1716,7 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "ws-pool"
 version = "0.1.0"
-source = "git+https://github.com/nerixyz/ws-pool#ca029e5434745cd95c095e810df157abbc27bbc2"
+source = "git+https://github.com/nerixyz/ws-pool#74f33a6ec2e890580c2770d5cc94e9dbded74add"
 dependencies = [
  "fastwebsockets",
  "http",
