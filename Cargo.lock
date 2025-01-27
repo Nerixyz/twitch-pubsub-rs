@@ -431,9 +431,9 @@ dependencies = [
 
 [[package]]
 name = "http"
-version = "1.1.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21b9ddb458710bc376481b842f5da65cdf31522de232c1ca8146abce2a358258"
+checksum = "f16ca2af56261c99fba8bac40a10251ce8188205a4c448fbb745a2e4daa76fea"
 dependencies = [
  "bytes",
  "fnv",
@@ -1418,8 +1418,8 @@ dependencies = [
 
 [[package]]
 name = "twitch_api"
-version = "0.7.0-rc.8"
-source = "git+https://github.com/twitch-rs/twitch_api#8dbaddc060da25bf62ae03524ee21a2d8103c9c2"
+version = "0.7.0"
+source = "git+https://github.com/twitch-rs/twitch_api#0c915088ff6b8c0784a007e81d61ef1c5398710b"
 dependencies = [
  "aliri_braid",
  "displaydoc",
@@ -1439,7 +1439,7 @@ dependencies = [
 [[package]]
 name = "twitch_types"
 version = "0.4.8"
-source = "git+https://github.com/twitch-rs/twitch_api#8dbaddc060da25bf62ae03524ee21a2d8103c9c2"
+source = "git+https://github.com/twitch-rs/twitch_api#0c915088ff6b8c0784a007e81d61ef1c5398710b"
 dependencies = [
  "serde",
  "serde_derive",
