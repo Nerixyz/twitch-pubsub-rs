@@ -20,7 +20,7 @@ twitch_api = { git = "https://github.com/twitch-rs/twitch_api", features = [
     "pubsub",
 ], default-features = false }
 ws-pool = { git = "https://github.com/nerixyz/ws-pool" }
-rand = "0.8"
+rand = "0.9"
 url = "2.5"
 tracing = "0.1"
 
