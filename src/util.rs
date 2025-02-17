@@ -1,4 +1,4 @@
-use rand::{distributions::Alphanumeric, Rng};
+use rand::{distr::Alphanumeric, Rng};
 
 pub fn generate_nonce<R: Rng>(rng: R) -> String {
     rng.sample_iter(&Alphanumeric)
