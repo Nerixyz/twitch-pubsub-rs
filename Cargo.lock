@@ -1465,8 +1465,8 @@ dependencies = [
 
 [[package]]
 name = "twitch_api"
-version = "0.7.1"
-source = "git+https://github.com/twitch-rs/twitch_api#7279c23d3b5efd022286bc8a0b9d9c613a2b7cda"
+version = "0.7.2"
+source = "git+https://github.com/twitch-rs/twitch_api#c31743be352755e7b686f44794c54d9dd24efa14"
 dependencies = [
  "aliri_braid",
  "displaydoc",
@@ -1486,7 +1486,7 @@ dependencies = [
 [[package]]
 name = "twitch_types"
 version = "0.4.8"
-source = "git+https://github.com/twitch-rs/twitch_api#7279c23d3b5efd022286bc8a0b9d9c613a2b7cda"
+source = "git+https://github.com/twitch-rs/twitch_api#c31743be352755e7b686f44794c54d9dd24efa14"
 dependencies = [
  "serde",
  "serde_derive",
