@@ -54,9 +54,9 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
 
 [[package]]
 name = "anyhow"
-version = "1.0.97"
+version = "1.0.98"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
+checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
 name = "autocfg"
@@ -1466,7 +1466,7 @@ dependencies = [
 [[package]]
 name = "twitch_api"
 version = "0.7.2"
-source = "git+https://github.com/twitch-rs/twitch_api#c31743be352755e7b686f44794c54d9dd24efa14"
+source = "git+https://github.com/twitch-rs/twitch_api#ba8e64402ecdc5900686b6347c55d23f2c0af851"
 dependencies = [
  "aliri_braid",
  "displaydoc",
@@ -1486,7 +1486,7 @@ dependencies = [
 [[package]]
 name = "twitch_types"
 version = "0.4.8"
-source = "git+https://github.com/twitch-rs/twitch_api#c31743be352755e7b686f44794c54d9dd24efa14"
+source = "git+https://github.com/twitch-rs/twitch_api#ba8e64402ecdc5900686b6347c55d23f2c0af851"
 dependencies = [
  "serde",
  "serde_derive",
@@ -1793,7 +1793,7 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "ws-pool"
 version = "0.1.0"
-source = "git+https://github.com/nerixyz/ws-pool#7e16fe2dbbd4c77061804e290d32f03ee07f2d77"
+source = "git+https://github.com/nerixyz/ws-pool#a462fa58b9e55aeee35c73ed2f6152a872576a7d"
 dependencies = [
  "fastwebsockets",
  "http",
