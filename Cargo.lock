@@ -1465,7 +1465,7 @@ dependencies = [
 [[package]]
 name = "twitch_api"
 version = "0.7.2"
-source = "git+https://github.com/twitch-rs/twitch_api#ba8e64402ecdc5900686b6347c55d23f2c0af851"
+source = "git+https://github.com/twitch-rs/twitch_api#61f29e98c4cc0ab5e36e45b85b9aaad8e1d3b9ef"
 dependencies = [
  "aliri_braid",
  "displaydoc",
@@ -1485,7 +1485,7 @@ dependencies = [
 [[package]]
 name = "twitch_types"
 version = "0.4.8"
-source = "git+https://github.com/twitch-rs/twitch_api#ba8e64402ecdc5900686b6347c55d23f2c0af851"
+source = "git+https://github.com/twitch-rs/twitch_api#61f29e98c4cc0ab5e36e45b85b9aaad8e1d3b9ef"
 dependencies = [
  "serde",
  "serde_derive",
@@ -1792,7 +1792,7 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "ws-pool"
 version = "0.1.0"
-source = "git+https://github.com/nerixyz/ws-pool#651a5a2b600a1ee04f8ffc3d60d3e48624c81f82"
+source = "git+https://github.com/nerixyz/ws-pool#48b9d28add562999907346edbcd48e012bf4373c"
 dependencies = [
  "fastwebsockets",
  "http",
