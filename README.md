@@ -1,5 +1,11 @@
 # twitch-pubsub
 
+# Status
+
+Twitch shut down (official) PubSub on 14th of April 2025 ([blog](https://discuss.dev.twitch.com/t/legacy-pubsub-deprecation-and-shutdown-timeline/58043)). Although PubSub still works for some undocumented topics, I'm no longer using this library in any of my projects.
+
+---
+
 Connect to Twitch [PubSub](https://dev.twitch.tv/docs/pubsub) from Rust land.
 
 This crate is basically randers' [`twitch-irc-rs`](https://lib.rs/crates/twitch-irc)
